@@ -1,0 +1,41 @@
+     1                                  section .data
+     2 00000000 54686520717569636B-       string db "The quick brown dog jumps over the lazy fox" , 0xA
+     2 00000009 2062726F776E20646F-
+     2 00000012 67206A756D7073206F-
+     2 0000001B 76657220746865206C-
+     2 00000024 617A7920666F780A   
+     3                                    len equ $ - string
+     4 0000002C 71                        chr db 'q'
+     5                                  section .bss
+     6 00000000 <res 00000002>            indx resb 2
+     7                                  
+     8                                  section .text
+     9                                    global main
+    10                                  
+    11                                  main:
+    12 00000000 68[2C000000]              push chr
+    13 00000005 68[00000000]              push string
+    14 0000000A E807000000                call strchar
+    15 0000000F B801000000                mov eax , 1
+    16 00000014 CD80                      int 80h
+    17                                  
+    18                                  strchar:
+    19 00000016 55                        push ebp
+    20 00000017 89E5                      mov ebp , esp
+    21 00000019 31FF                      xor edi , edi
+    22 0000001B 30C0                      xor al , al
+    23 0000001D 8B7D08                    mov edi , [ebp + 8] ;buffer
+    24 00000020 8A5D0C                    mov bl , [ebp + 12] ; char
+    25                                  iterate:
+    26 00000023 8A0F                      mov cl , [edi]
+    27 00000025 38CB                      cmp bl , cl
+    28 00000027 7408                      jz return ; if matched
+    29 00000029 AE                        scasb
+    30 0000002A 75F7                      jnz iterate
+    31 0000002C BF00000000                mov edi , 0 ; return null if char did not match
+    32                                  
+    33                                  return:
+    34 00000031 89F8                      mov eax , edi
+    35 00000033 89EC                      mov esp , ebp
+    36 00000035 5D                        pop ebp
+    37 00000036 C3                        ret

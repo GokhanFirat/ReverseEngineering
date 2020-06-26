@@ -1,0 +1,37 @@
+     1                                  section .data
+     2 00000000 616162626363              src db "aabbcc"
+     3                                    dst db ''
+     4                                    count equ $ - src
+     5                                  
+     6                                  ;section .bss
+     7                                  ;  resb dst 2
+     8                                  
+     9                                  section .text
+    10                                    global main
+    11                                  
+    12                                  main:
+    13 00000000 90                        nop
+    14 00000001 6A06                      push count
+    15 00000003 68[00000000]              push src
+    16 00000008 68[06000000]              push dst
+    17 0000000D E809000000                call memcpy
+    18 00000012 89C2                      mov edx, eax
+    19 00000014 B801000000                mov eax, 1
+    20 00000019 CD80                      int 80h
+    21                                  
+    22                                  memcpy:
+    23 0000001B 55                        push ebp
+    24 0000001C 89E5                      mov ebp, esp
+    25 0000001E 8B7D08                    mov edi, [ebp + 8] ; destination buffer
+    26 00000021 8B750C                    mov esi, [ebp + 0xC] ; source buffer
+    27 00000024 8B4D10                    mov ecx, [ebp + 0x10] ; Number of characters to copy
+    28                                  _loop:
+    29 00000027 8A06                      mov al, [esi]
+    30 00000029 8807                      mov [edi], al
+    31 0000002B 46                        inc esi
+    32 0000002C 47                        inc edi
+    33 0000002D 49                        dec ecx
+    34 0000002E 75F7                      jnz _loop
+    35 00000030 89EC                      mov esp, ebp
+    36 00000032 5D                        pop ebp
+    37 00000033 C3                        ret

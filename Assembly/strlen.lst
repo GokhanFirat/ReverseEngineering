@@ -1,0 +1,27 @@
+     1                                  section .data
+     2 00000000 48656C6C6F2C20576F-       string db "Hello, World!"
+     2 00000009 726C6421           
+     3                                  
+     4                                  section .text
+     5                                    global main
+     6                                  
+     7                                  main:
+     8 00000000 68[00000000]              push string
+     9 00000005 E809000000                call strlen
+    10 0000000A 89C2                      mov edx , eax
+    11 0000000C B801000000                mov eax , 1
+    12 00000011 CD80                      int 80h
+    13                                  
+    14                                  strlen:
+    15 00000013 90                        nop
+    16 00000014 55                        push ebp
+    17 00000015 89E5                      mov ebp , esp
+    18 00000017 30C0                      xor al , al        ; set eax to null byte
+    19 00000019 8B7D08                    mov edi, [ebp + 8]    ; get first parameter
+    20 0000001C 89FA                      mov edx, edi         ; copy address to start of string
+    21 0000001E F2AE                      repne scasb          ; search null byte
+    22 00000020 29D7                      sub edi, edx   ; substract start address from end address
+    23 00000022 89F8                      mov eax , edi
+    24 00000024 89EC                      mov esp, ebp
+    25 00000026 5D                        pop ebp
+    26 00000027 C3                        ret

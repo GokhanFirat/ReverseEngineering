@@ -1,0 +1,30 @@
+     1                                  section .data
+     2 00000000 42424242                  buffer dw "BBBB"
+     3 00000004 2A                        chr db '*'
+     4 00000005 04                        count db 4
+     5                                  section .bss
+     6                                  
+     7                                  section .text
+     8                                    global main
+     9                                  
+    10                                  main:
+    11 00000000 68[05000000]              push count
+    12 00000005 68[04000000]              push chr
+    13 0000000A 68[00000000]              push buffer
+    14 0000000F E809000000                call memset
+    15 00000014 89C2                      mov edx , eax
+    16 00000016 B801000000                mov eax , 1
+    17 0000001B CD80                      int 80h
+    18                                  
+    19                                  memset:
+    20 0000001D 55                        push ebp
+    21 0000001E 89E5                      mov ebp , esp
+    22 00000020 6631C0                    xor ax , ax
+    23 00000023 8B7D08                    mov edi , [ebp + 8] ; dest
+    24 00000026 668B450C                  mov ax , [ebp + 0xC] ; char
+    25 0000002A 8B4D10                    mov ecx , [ebp + 0x10] ; counter
+    26 0000002D F3AA                      rep stosb
+    27                                    ;mov eax , [edi]
+    28 0000002F 89EC                      mov esp , ebp
+    29 00000031 5D                        pop ebp
+    30 00000032 C3                        ret
